@@ -15,7 +15,7 @@ services:
         value: 10000
 
   # Frontend Service (React/Vite)
-  - type: static
+  - type: web
     name: academic-system-frontend
     env: static
     buildCommand: npm install && npm run build
