@@ -1,0 +1,114 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+  binaryTargets = ["native"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String   @default("$2a$10$NotRealHashPlaceholder") // Default for existing users, should be hashed
+  role      String   // admin, professor, student
+  avatar    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  professoClasses Class[]      @relation("ProfessorClasses")
+  enrollments     Enrollment[]
+  attendance      Attendance[]
+  grades          Grade[]
+}
+
+model Course {
+  id        String    @id @default(uuid())
+  name      String
+  code      String    @unique
+  credits   Int
+  subjects  Subject[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Subject {
+  id        String   @id @default(uuid())
+  name      String
+  code      String   @unique
+  courseId  String
+  course    Course   @relation(fields: [courseId], references: [id])
+  classes   Class[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Class {
+  id          String   @id @default(uuid())
+  subjectId   String
+  subject     Subject  @relation(fields: [subjectId], references: [id])
+  professorId String?
+  professor   User?    @relation("ProfessorClasses", fields: [professorId], references: [id])
+  room        String
+  schedule    String
+  term        String
+  status      String   // active, completed, archived
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  enrollments Enrollment[]
+  sessions    ClassSession[]
+}
+
+model Enrollment {
+  id        String   @id @default(uuid())
+  studentId String
+  student   User     @relation(fields: [studentId], references: [id])
+  classId   String
+  class     Class    @relation(fields: [classId], references: [id])
+  enrolledAt DateTime @default(now())
+
+  @@unique([studentId, classId])
+}
+
+model ClassSession {
+  id          String       @id @default(uuid())
+  classId     String
+  class       Class        @relation(fields: [classId], references: [id])
+  date        DateTime
+  topic       String
+  description String?
+  createdAt   DateTime     @default(now())
+  attendance  Attendance[]
+}
+
+model Attendance {
+  id        String       @id @default(uuid())
+  sessionId String
+  session   ClassSession @relation(fields: [sessionId], references: [id])
+  studentId String
+  student   User         @relation(fields: [studentId], references: [id])
+  present   Boolean
+  createdAt DateTime     @default(now())
+
+  @@unique([sessionId, studentId])
+}
+
+model Grade {
+  id           String   @id @default(uuid())
+  studentId    String
+  student      User     @relation(fields: [studentId], references: [id])
+  assessmentId String   // e.g., "classId_N1"
+  value        Float
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([studentId, assessmentId])
+}

@@ -1,0 +1,32 @@
+services:
+  # Backend Service (Node.js/Express)
+  - type: web
+    name: academic-system-backend
+    env: node
+    rootDir: server
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: PORT
+        value: 10000
+
+  # Frontend Service (React/Vite)
+  - type: static
+    name: academic-system-frontend
+    env: static
+    buildCommand: npm install && npm run build
+    publish: dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: academic-system-backend
+          property: url
