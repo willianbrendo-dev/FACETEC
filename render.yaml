@@ -20,9 +20,3 @@ services:
     env: node
     buildCommand: npm install && npm run build
     startCommand: npx serve -s dist
-    envVars:
-      - key: VITE_API_URL
-        fromService:
-          type: web
-          name: academic-system-backend
-          property: url
