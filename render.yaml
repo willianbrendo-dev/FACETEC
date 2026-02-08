@@ -4,7 +4,7 @@ services:
     name: academic-system-backend
     env: node
     rootDir: server
-    buildCommand: npm install && npm run build
+    buildCommand: npm install && npx prisma generate && npm run build
     startCommand: npm start
     envVars:
       - key: DATABASE_URL
@@ -18,6 +18,5 @@ services:
   - type: web
     name: academic-system-frontend
     env: node
-    rootDir: .
     buildCommand: npm install && npm run build
     startCommand: npx serve -s dist
