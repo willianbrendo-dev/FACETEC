@@ -60,53 +60,106 @@ export const AdminCourses = () => {
                 </div>
             </div>
 
+            {/* COURSES LIST */}
             <Card>
                 <div className="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
                     <BookOpen className="w-5 h-5 text-primary-600" />
                     <h2 className="font-semibold text-gray-900">Cursos Definidos</h2>
                 </div>
-                <Table headers={['Código', 'Nome do Curso', 'Créditos', 'Disciplinas', 'Status']}>
+
+                {/* Desktop Table */}
+                <div className="hidden md:block">
+                    <Table headers={['Código', 'Nome do Curso', 'Créditos', 'Disciplinas', 'Status']}>
+                        {courses.map(course => (
+                            <tr key={course.id} className="hover:bg-gray-50 transition-colors">
+                                <td className="px-6 py-4 font-mono text-xs text-gray-500">{course.code}</td>
+                                <td className="px-6 py-4 font-medium text-gray-900">{course.name}</td>
+                                <td className="px-6 py-4 text-gray-600">{course.credits}h</td>
+                                <td className="px-6 py-4">
+                                    <Badge variant="blue">{countSubjects(course.id)} Disciplinas</Badge>
+                                </td>
+                                <td className="px-6 py-4">
+                                    <Badge variant="green">Ativo</Badge>
+                                </td>
+                            </tr>
+                        ))}
+                        {courses.length === 0 && (
+                            <tr>
+                                <td colSpan={5} className="text-center py-8 text-gray-500">Nenhum curso definido ainda.</td>
+                            </tr>
+                        )}
+                    </Table>
+                </div>
+
+                {/* Mobile Cards */}
+                <div className="md:hidden p-4 grid grid-cols-1 gap-4">
                     {courses.map(course => (
-                        <tr key={course.id} className="hover:bg-gray-50 transition-colors">
-                            <td className="px-6 py-4 font-mono text-xs text-gray-500">{course.code}</td>
-                            <td className="px-6 py-4 font-medium text-gray-900">{course.name}</td>
-                            <td className="px-6 py-4 text-gray-600">{course.credits}h</td>
-                            <td className="px-6 py-4">
-                                <Badge variant="blue">{countSubjects(course.id)} Disciplinas</Badge>
-                            </td>
-                            <td className="px-6 py-4">
+                        <div key={course.id} className="bg-gray-50 p-4 rounded-lg flex flex-col gap-3">
+                            <div className="flex justify-between items-start">
+                                <div>
+                                    <span className="font-mono text-xs text-gray-500 bg-white px-2 py-1 rounded border border-gray-200">{course.code}</span>
+                                    <h3 className="font-medium text-gray-900 mt-2">{course.name}</h3>
+                                </div>
                                 <Badge variant="green">Ativo</Badge>
-                            </td>
-                        </tr>
+                            </div>
+                            <div className="flex items-center justify-between text-sm text-gray-600">
+                                <span>{course.credits}h</span>
+                                <Badge variant="blue">{countSubjects(course.id)} Disciplinas</Badge>
+                            </div>
+                        </div>
                     ))}
                     {courses.length === 0 && (
-                        <tr>
-                            <td colSpan={5} className="text-center py-8 text-gray-500">Nenhum curso definido ainda.</td>
-                        </tr>
+                        <p className="text-center py-8 text-gray-500">Nenhum curso definido ainda.</p>
                     )}
-                </Table>
+                </div>
             </Card>
 
+            {/* SUBJECTS LIST */}
             <Card>
                 <div className="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
                     <Layers className="w-5 h-5 text-primary-600" />
                     <h2 className="font-semibold text-gray-900">Todas as Disciplinas</h2>
                 </div>
-                <Table headers={['Código', 'Nome da Disciplina', 'Curso Pai', 'Ações']}>
+
+                {/* Desktop Table */}
+                <div className="hidden md:block">
+                    <Table headers={['Código', 'Nome da Disciplina', 'Curso Pai', 'Ações']}>
+                        {subjects.map(subject => {
+                            const course = courses.find(c => c.id === subject.courseId);
+                            return (
+                                <tr key={subject.id} className="hover:bg-gray-50">
+                                    <td className="px-6 py-4 font-mono text-xs text-gray-500">{subject.code}</td>
+                                    <td className="px-6 py-4 font-medium text-gray-900">{subject.name}</td>
+                                    <td className="px-6 py-4 text-gray-600">{course?.name || 'Desconhecido'}</td>
+                                    <td className="px-6 py-4">
+                                        <button className="text-primary-600 hover:text-primary-800 text-sm font-medium">Editar</button>
+                                    </td>
+                                </tr>
+                            );
+                        })}
+                    </Table>
+                </div>
+
+                {/* Mobile Cards */}
+                <div className="md:hidden p-4 grid grid-cols-1 gap-4">
                     {subjects.map(subject => {
                         const course = courses.find(c => c.id === subject.courseId);
                         return (
-                            <tr key={subject.id} className="hover:bg-gray-50">
-                                <td className="px-6 py-4 font-mono text-xs text-gray-500">{subject.code}</td>
-                                <td className="px-6 py-4 font-medium text-gray-900">{subject.name}</td>
-                                <td className="px-6 py-4 text-gray-600">{course?.name || 'Desconhecido'}</td>
-                                <td className="px-6 py-4">
+                            <div key={subject.id} className="bg-gray-50 p-4 rounded-lg flex flex-col gap-3">
+                                <div className="flex justify-between items-start">
+                                    <div>
+                                        <span className="font-mono text-xs text-gray-500 bg-white px-2 py-1 rounded border border-gray-200">{subject.code}</span>
+                                        <h3 className="font-medium text-gray-900 mt-2">{subject.name}</h3>
+                                    </div>
                                     <button className="text-primary-600 hover:text-primary-800 text-sm font-medium">Editar</button>
-                                </td>
-                            </tr>
+                                </div>
+                                <div className="text-sm text-gray-500">
+                                    <span className="font-medium text-gray-700">Curso:</span> {course?.name || 'Desconhecido'}
+                                </div>
+                            </div>
                         );
                     })}
-                </Table>
+                </div>
             </Card>
 
             {/* CREATE COURSE MODAL */}

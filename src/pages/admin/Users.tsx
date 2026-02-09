@@ -56,37 +56,70 @@ export const AdminUsers = () => {
                 ))}
             </div>
 
-            <Card>
-                <Table headers={['Nome', 'E-mail', 'Função', 'Status', 'Ações']}>
-                    {filteredUsers.map(user => (
-                        <tr key={user.id} className="hover:bg-gray-50">
-                            <td className="px-6 py-4">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
-                                        {user.avatar ? <img src={user.avatar} alt="" /> : <UserIcon className="w-4 h-4 text-gray-500" />}
+            {/* Desktop Table View */}
+            <div className="hidden md:block">
+                <Card>
+                    <Table headers={['Nome', 'E-mail', 'Função', 'Status', 'Ações']}>
+                        {filteredUsers.map(user => (
+                            <tr key={user.id} className="hover:bg-gray-50">
+                                <td className="px-6 py-4">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
+                                            {user.avatar ? <img src={user.avatar} alt="" /> : <UserIcon className="w-4 h-4 text-gray-500" />}
+                                        </div>
+                                        <span className="font-medium text-gray-900">{user.name}</span>
                                     </div>
-                                    <span className="font-medium text-gray-900">{user.name}</span>
+                                </td>
+                                <td className="px-6 py-4 text-gray-600">{user.email}</td>
+                                <td className="px-6 py-4">
+                                    <Badge variant={user.role === 'admin' ? 'red' : user.role === 'professor' ? 'blue' : 'green'}>
+                                        {user.role}
+                                    </Badge>
+                                </td>
+                                <td className="px-6 py-4">
+                                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-50 text-green-700">
+                                        <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                                        Ativo
+                                    </span>
+                                </td>
+                                <td className="px-6 py-4">
+                                    <button className="text-primary-600 hover:text-primary-800 text-sm font-medium">Editar</button>
+                                </td>
+                            </tr>
+                        ))}
+                    </Table>
+                </Card>
+            </div>
+
+            {/* Mobile Card View */}
+            <div className="md:hidden grid grid-cols-1 gap-4">
+                {filteredUsers.map(user => (
+                    <div key={user.id} className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col gap-4">
+                        <div className="flex items-start justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
+                                    {user.avatar ? <img src={user.avatar} alt="" className="w-full h-full object-cover" /> : <UserIcon className="w-5 h-5 text-gray-500" />}
                                 </div>
-                            </td>
-                            <td className="px-6 py-4 text-gray-600">{user.email}</td>
-                            <td className="px-6 py-4">
-                                <Badge variant={user.role === 'admin' ? 'red' : user.role === 'professor' ? 'blue' : 'green'}>
-                                    {user.role}
-                                </Badge>
-                            </td>
-                            <td className="px-6 py-4">
-                                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-50 text-green-700">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
-                                    Ativo
-                                </span>
-                            </td>
-                            <td className="px-6 py-4">
-                                <button className="text-primary-600 hover:text-primary-800 text-sm font-medium">Editar</button>
-                            </td>
-                        </tr>
-                    ))}
-                </Table>
-            </Card>
+                                <div>
+                                    <h3 className="font-medium text-gray-900">{user.name}</h3>
+                                    <p className="text-sm text-gray-500">{user.email}</p>
+                                </div>
+                            </div>
+                            <Badge variant={user.role === 'admin' ? 'red' : user.role === 'professor' ? 'blue' : 'green'}>
+                                {user.role}
+                            </Badge>
+                        </div>
+
+                        <div className="flex items-center justify-between pt-4 border-t border-gray-50">
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-50 text-green-700">
+                                <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                                Ativo
+                            </span>
+                            <button className="text-primary-600 hover:text-primary-800 text-sm font-medium">Editar</button>
+                        </div>
+                    </div>
+                ))}
+            </div>
 
             <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Criar Novo Usuário">
                 <form onSubmit={handleCreateUser} className="space-y-4">

@@ -22,7 +22,68 @@ export const StudentDashboard = () => {
                         <GraduationCap className="w-5 h-5 text-primary-600" />
                         <h2 className="font-semibold text-gray-900">Boletim Escolar</h2>
                     </div>
-                    <Table headers={['Disciplina', 'Turma', 'Frequência', 'N1', 'N2', 'Média', 'Status']}>
+
+                    {/* Desktop Table */}
+                    <div className="hidden md:block">
+                        <Table headers={['Disciplina', 'Turma', 'Frequência', 'N1', 'N2', 'Média', 'Status']}>
+                            {myClasses.map(cls => {
+                                const subject = subjects.find(s => s.id === cls.subjectId);
+
+                                // Logic for Grades
+                                const n1Key = `${cls.id}_N1`;
+                                const n2Key = `${cls.id}_N2`;
+                                const n1 = grades.find(g => g.studentId === user?.id && g.assessmentId === n1Key)?.value;
+                                const n2 = grades.find(g => g.studentId === user?.id && g.assessmentId === n2Key)?.value;
+                                const avg = ((n1 || 0) * 0.5) + ((n2 || 0) * 0.5);
+                                const hasGrade = n1 !== undefined || n2 !== undefined;
+                                const passed = avg >= 6.0;
+
+                                // Logic for Attendance
+                                const classSessions = sessions.filter(s => s.classId === cls.id);
+                                const totalSessions = classSessions.length;
+                                const presentCount = attendance.filter(a => a.sessionId && classSessions.some(s => s.id === a.sessionId) && a.studentId === user?.id && a.present).length;
+                                const attendanceRate = totalSessions > 0 ? Math.round((presentCount / totalSessions) * 100) : 100;
+
+                                return (
+                                    <tr key={cls.id} className="hover:bg-gray-50">
+                                        <td className="px-6 py-4 font-medium text-gray-900">
+                                            {subject?.name}
+                                            <div className="text-xs text-gray-400 font-normal">{subject?.code}</div>
+                                        </td>
+                                        <td className="px-6 py-4 text-gray-600 text-sm">
+                                            {cls.schedule}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <span className={`font-semibold ${attendanceRate < 75 ? 'text-red-500' : 'text-green-600'}`}>
+                                                {attendanceRate}%
+                                            </span>
+                                            <span className="text-xs text-gray-400 ml-1">({presentCount}/{totalSessions})</span>
+                                        </td>
+                                        <td className="px-6 py-4 text-gray-600">{n1 ?? '-'}</td>
+                                        <td className="px-6 py-4 text-gray-600">{n2 ?? '-'}</td>
+                                        <td className="px-6 py-4 font-bold text-gray-900">
+                                            {hasGrade ? avg.toFixed(1) : '-'}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            {hasGrade ? (
+                                                <Badge variant={passed ? 'green' : 'red'}>
+                                                    {passed ? 'Aprovado' : 'Reprovado'}
+                                                </Badge>
+                                            ) : (
+                                                <Badge variant="blue">Em Andamento</Badge>
+                                            )}
+                                        </td>
+                                    </tr>
+                                );
+                            })}
+                            {myClasses.length === 0 && (
+                                <tr><td colSpan={7} className="text-center py-8 text-gray-500">Você não está matriculado em nenhuma turma.</td></tr>
+                            )}
+                        </Table>
+                    </div>
+
+                    {/* Mobile Cards */}
+                    <div className="md:hidden p-4 grid grid-cols-1 gap-4">
                         {myClasses.map(cls => {
                             const subject = subjects.find(s => s.id === cls.subjectId);
 
@@ -42,26 +103,12 @@ export const StudentDashboard = () => {
                             const attendanceRate = totalSessions > 0 ? Math.round((presentCount / totalSessions) * 100) : 100;
 
                             return (
-                                <tr key={cls.id} className="hover:bg-gray-50">
-                                    <td className="px-6 py-4 font-medium text-gray-900">
-                                        {subject?.name}
-                                        <div className="text-xs text-gray-400 font-normal">{subject?.code}</div>
-                                    </td>
-                                    <td className="px-6 py-4 text-gray-600 text-sm">
-                                        {cls.schedule}
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <span className={`font-semibold ${attendanceRate < 75 ? 'text-red-500' : 'text-green-600'}`}>
-                                            {attendanceRate}%
-                                        </span>
-                                        <span className="text-xs text-gray-400 ml-1">({presentCount}/{totalSessions})</span>
-                                    </td>
-                                    <td className="px-6 py-4 text-gray-600">{n1 ?? '-'}</td>
-                                    <td className="px-6 py-4 text-gray-600">{n2 ?? '-'}</td>
-                                    <td className="px-6 py-4 font-bold text-gray-900">
-                                        {hasGrade ? avg.toFixed(1) : '-'}
-                                    </td>
-                                    <td className="px-6 py-4">
+                                <div key={cls.id} className="bg-gray-50 p-4 rounded-lg flex flex-col gap-3">
+                                    <div className="flex justify-between items-start">
+                                        <div>
+                                            <h3 className="font-medium text-gray-900">{subject?.name}</h3>
+                                            <div className="text-xs text-gray-500">{subject?.code} • {cls.schedule}</div>
+                                        </div>
                                         {hasGrade ? (
                                             <Badge variant={passed ? 'green' : 'red'}>
                                                 {passed ? 'Aprovado' : 'Reprovado'}
@@ -69,14 +116,33 @@ export const StudentDashboard = () => {
                                         ) : (
                                             <Badge variant="blue">Em Andamento</Badge>
                                         )}
-                                    </td>
-                                </tr>
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-4 text-sm mt-2">
+                                        <div className="bg-white p-3 rounded border border-gray-100">
+                                            <span className="block text-xs text-gray-400 mb-1">Frequência</span>
+                                            <span className={`font-bold ${attendanceRate < 75 ? 'text-red-500' : 'text-green-600'}`}>
+                                                {attendanceRate}%
+                                            </span>
+                                            <span className="text-xs text-gray-400 ml-1">({presentCount}/{totalSessions})</span>
+                                        </div>
+                                        <div className="bg-white p-3 rounded border border-gray-100">
+                                            <span className="block text-xs text-gray-400 mb-1">Média Final</span>
+                                            <span className="font-bold text-gray-900">{hasGrade ? avg.toFixed(1) : '-'}</span>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center justify-between text-xs text-gray-500 px-1">
+                                        <span>N1: <strong>{n1 ?? '-'}</strong></span>
+                                        <span>N2: <strong>{n2 ?? '-'}</strong></span>
+                                    </div>
+                                </div>
                             );
                         })}
                         {myClasses.length === 0 && (
-                            <tr><td colSpan={7} className="text-center py-8 text-gray-500">Você não está matriculado em nenhuma turma.</td></tr>
+                            <p className="text-center py-8 text-gray-500">Você não está matriculado em nenhuma turma.</p>
                         )}
-                    </Table>
+                    </div>
                 </Card>
             </div>
 

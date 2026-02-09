@@ -68,36 +68,88 @@ export const AdminClasses = () => {
             </div>
 
             <Card>
-                <Table headers={['Disciplina', 'Professor', 'Horário', 'Sala', 'Matrículas', 'Status', 'Ações']}>
+                {/* Desktop Table */}
+                <div className="hidden md:block">
+                    <Table headers={['Disciplina', 'Professor', 'Horário', 'Sala', 'Matrículas', 'Status', 'Ações']}>
+                        {activeClasses.map(cls => {
+                            const subject = allSubjects.find(s => s.id === cls.subjectId);
+                            const professor = users.find(u => u.id === cls.professorId);
+                            const classEnrollments = enrollments.filter(e => e.classId === cls.id).length;
+
+                            return (
+                                <tr key={cls.id} className="hover:bg-gray-50">
+                                    <td className="px-6 py-4 font-medium text-gray-900">
+                                        {subject?.name} <span className="text-gray-400 font-normal">({subject?.code})</span>
+                                    </td>
+                                    <td className="px-6 py-4 text-gray-600">{professor?.name || 'Não Atribuído'}</td>
+                                    <td className="px-6 py-4 text-gray-600 text-sm">{cls.schedule}</td>
+                                    <td className="px-6 py-4 text-gray-600">{cls.room}</td>
+                                    <td className="px-6 py-4 font-mono text-center">{classEnrollments}</td>
+                                    <td className="px-6 py-4">
+                                        <Badge variant={cls.status === 'active' ? 'green' : 'gray'}>{cls.status === 'active' ? 'Ativo' : 'Inativo'}</Badge>
+                                    </td>
+                                    <td className="px-6 py-4 flex gap-2">
+                                        <Button size="sm" variant="secondary" onClick={() => {
+                                            setSelectedClassId(cls.id);
+                                            setIsEnrollModalOpen(true);
+                                        }}>
+                                            <Users className="w-3 h-3" /> Matricular
+                                        </Button>
+                                    </td>
+                                </tr>
+                            );
+                        })}
+                    </Table>
+                </div>
+
+                {/* Mobile Cards */}
+                <div className="md:hidden p-4 grid grid-cols-1 gap-4">
                     {activeClasses.map(cls => {
                         const subject = allSubjects.find(s => s.id === cls.subjectId);
                         const professor = users.find(u => u.id === cls.professorId);
                         const classEnrollments = enrollments.filter(e => e.classId === cls.id).length;
 
                         return (
-                            <tr key={cls.id} className="hover:bg-gray-50">
-                                <td className="px-6 py-4 font-medium text-gray-900">
-                                    {subject?.name} <span className="text-gray-400 font-normal">({subject?.code})</span>
-                                </td>
-                                <td className="px-6 py-4 text-gray-600">{professor?.name || 'Não Atribuído'}</td>
-                                <td className="px-6 py-4 text-gray-600 text-sm">{cls.schedule}</td>
-                                <td className="px-6 py-4 text-gray-600">{cls.room}</td>
-                                <td className="px-6 py-4 font-mono text-center">{classEnrollments}</td>
-                                <td className="px-6 py-4">
+                            <div key={cls.id} className="bg-gray-50 p-4 rounded-lg flex flex-col gap-3">
+                                <div className="flex justify-between items-start">
+                                    <div>
+                                        <h3 className="font-medium text-gray-900">{subject?.name}</h3>
+                                        <span className="text-xs text-gray-500 font-mono">{subject?.code}</span>
+                                    </div>
                                     <Badge variant={cls.status === 'active' ? 'green' : 'gray'}>{cls.status === 'active' ? 'Ativo' : 'Inativo'}</Badge>
-                                </td>
-                                <td className="px-6 py-4 flex gap-2">
-                                    <Button size="sm" variant="secondary" onClick={() => {
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-2 text-sm text-gray-600">
+                                    <div>
+                                        <span className="block text-xs text-gray-400">Professor</span>
+                                        {professor?.name || '---'}
+                                    </div>
+                                    <div>
+                                        <span className="block text-xs text-gray-400">Horário</span>
+                                        {cls.schedule}
+                                    </div>
+                                    <div>
+                                        <span className="block text-xs text-gray-400">Sala</span>
+                                        {cls.room}
+                                    </div>
+                                    <div>
+                                        <span className="block text-xs text-gray-400">Matrículas</span>
+                                        {classEnrollments} alunos
+                                    </div>
+                                </div>
+
+                                <div className="pt-2 border-t border-gray-200">
+                                    <Button size="sm" variant="secondary" className="w-full" onClick={() => {
                                         setSelectedClassId(cls.id);
                                         setIsEnrollModalOpen(true);
                                     }}>
-                                        <Users className="w-3 h-3" /> Matricular
+                                        <Users className="w-3 h-3" /> Matricular Aluno
                                     </Button>
-                                </td>
-                            </tr>
+                                </div>
+                            </div>
                         );
                     })}
-                </Table>
+                </div>
             </Card>
 
             {/* CREATE CLASS MODAL */}

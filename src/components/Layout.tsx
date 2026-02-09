@@ -28,6 +28,22 @@ export const Layout = () => {
         navigate('/login');
     };
 
+    const NAV_ITEMS = {
+        admin: [
+            { to: "/admin/dashboard", icon: LayoutDashboard, label: "Painel" },
+            { to: "/admin/courses", icon: BookOpen, label: "Cursos" },
+            { to: "/admin/classes", icon: Calendar, label: "Turmas" },
+            { to: "/admin/users", icon: Users, label: "Usuários" },
+        ],
+        professor: [
+            { to: "/professor/dashboard", icon: LayoutDashboard, label: "Minhas Turmas" },
+        ],
+        student: [
+            { to: "/student/dashboard", icon: LayoutDashboard, label: "Minhas Turmas" },
+            { to: "/student/grades", icon: GraduationCap, label: "Boletim" },
+        ]
+    };
+
     const NavItem = ({ to, icon: Icon, children }: { to: string, icon: any, children: React.ReactNode }) => (
         <NavLink
             to={to}
@@ -44,107 +60,108 @@ export const Layout = () => {
         </NavLink>
     );
 
+    const userRole = user.role as keyof typeof NAV_ITEMS;
+    const navLinks = NAV_ITEMS[userRole] || [];
+
+    const SidebarContent = () => (
+        <>
+            <div className="p-6 flex items-center gap-3 border-b border-gray-100">
+                <div className="bg-primary-600 p-2 rounded-lg">
+                    <School className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                    <h1 className="font-bold text-gray-900 text-lg leading-tight">Sistema<br />Acadêmico</h1>
+                </div>
+            </div>
+
+            <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+                <div className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider mt-4">
+                    {user.role === 'admin' ? 'Gestão' : user.role === 'professor' ? 'Acadêmico' : 'Aprendizado'}
+                </div>
+                {navLinks.map((link) => (
+                    <NavItem key={link.to} to={link.to} icon={link.icon}>
+                        {link.label}
+                    </NavItem>
+                ))}
+            </nav>
+
+            <div className="p-4 border-t border-gray-100">
+                <div className="flex items-center gap-3 px-4 py-3 mb-2">
+                    <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 font-bold">
+                        {user.name.charAt(0)}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-gray-900 truncate">{user.name}</p>
+                        <p className="text-xs text-gray-500 capitalize">
+                            {user.role === 'admin' ? 'Administrador' : user.role === 'professor' ? 'Professor' : 'Aluno'}
+                        </p>
+                    </div>
+                </div>
+                <button
+                    onClick={handleLogout}
+                    className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                >
+                    <LogOut className="w-4 h-4" />
+                    Sair
+                </button>
+            </div>
+        </>
+    );
+
     return (
         <div className="min-h-screen bg-gray-50 flex">
             {/* Sidebar - Desktop */}
-            <aside className="hidden md:flex flex-col w-64 bg-white border-r border-gray-200 fixed h-full z-10">
-                <div className="p-6 flex items-center gap-3 border-b border-gray-100">
-                    <div className="bg-primary-600 p-2 rounded-lg">
-                        <School className="w-6 h-6 text-white" />
-                    </div>
-                    <div>
-                        <h1 className="font-bold text-gray-900 text-lg leading-tight">Sistema<br />Acadêmico</h1>
-                    </div>
-                </div>
-
-                <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
-                    {user.role === 'admin' && (
-                        <>
-                            <div className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider mt-4">Gestão</div>
-                            <NavItem to="/admin/dashboard" icon={LayoutDashboard}>Painel</NavItem>
-                            <NavItem to="/admin/courses" icon={BookOpen}>Cursos</NavItem>
-                            <NavItem to="/admin/classes" icon={Calendar}>Turmas</NavItem>
-                            <NavItem to="/admin/users" icon={Users}>Usuários</NavItem>
-                        </>
-                    )}
-
-                    {user.role === 'professor' && (
-                        <>
-                            <div className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider mt-4">Acadêmico</div>
-                            <NavItem to="/professor/dashboard" icon={LayoutDashboard}>Minhas Turmas</NavItem>
-                        </>
-                    )}
-
-                    {user.role === 'student' && (
-                        <>
-                            <div className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider mt-4">Aprendizado</div>
-                            <NavItem to="/student/dashboard" icon={LayoutDashboard}>Minhas Turmas</NavItem>
-                            <NavItem to="/student/grades" icon={GraduationCap}>Boletim</NavItem>
-                        </>
-                    )}
-                </nav>
-
-                <div className="p-4 border-t border-gray-100">
-                    <div className="flex items-center gap-3 px-4 py-3 mb-2">
-                        <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 font-bold">
-                            {user.name.charAt(0)}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-gray-900 truncate">{user.name}</p>
-                            <p className="text-xs text-gray-500 capitalize">
-                                {user.role === 'admin' ? 'Administrador' : user.role === 'professor' ? 'Professor' : 'Aluno'}
-                            </p>
-                        </div>
-                    </div>
-                    <button
-                        onClick={handleLogout}
-                        className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                    >
-                        <LogOut className="w-4 h-4" />
-                        Sair
-                    </button>
-                </div>
+            <aside className="hidden md:flex flex-col w-64 bg-white border-r border-gray-200 fixed h-full z-10 transition-all duration-300">
+                <SidebarContent />
             </aside>
 
             {/* Main Content */}
-            <main className="flex-1 md:ml-64 min-h-screen flex flex-col">
+            <main className="flex-1 md:ml-64 min-h-screen flex flex-col transition-all duration-300">
                 {/* Mobile Header */}
-                <header className="md:hidden bg-white border-b border-gray-200 p-4 flex items-center justify-between sticky top-0 z-20">
+                <header className="md:hidden bg-white border-b border-gray-200 p-4 flex items-center justify-between sticky top-0 z-20 shadow-sm">
                     <div className="flex items-center gap-2">
                         <div className="bg-primary-600 p-1.5 rounded-lg">
                             <School className="w-5 h-5 text-white" />
                         </div>
                         <span className="font-bold text-gray-900">Sistema Acadêmico</span>
                     </div>
-                    <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
-                        {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                    <button
+                        onClick={() => setIsMobileMenuOpen(true)}
+                        className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                    >
+                        <Menu className="w-6 h-6 text-gray-600" />
                     </button>
                 </header>
 
                 {/* Mobile Menu Overlay */}
-                {isMobileMenuOpen && (
-                    <div className="md:hidden fixed inset-0 z-30 bg-gray-800/50" onClick={() => setIsMobileMenuOpen(false)}>
-                        <div className="absolute right-0 top-0 bottom-0 w-64 bg-white shadow-xl flex flex-col" onClick={e => e.stopPropagation()}>
-                            {/* Replicated Nav Logic for Mobile */}
-                            <div className="p-4 border-b border-gray-100 flex justify-between items-center">
-                                <span className="font-bold text-lg">Menu</span>
-                                <button onClick={() => setIsMobileMenuOpen(false)}><X className="w-5 h-5" /></button>
-                            </div>
-                            <nav className="flex-1 p-4 space-y-2">
-                                {/* ... Same nav items as desktop ... */}
-                                {/* Simplified for brevity in this tool call, but ideally components should be shared */}
-                                <NavItem to={user.role === 'admin' ? '/admin/dashboard' : user.role === 'professor' ? '/professor/dashboard' : '/student/dashboard'} icon={LayoutDashboard}>Painel</NavItem>
-                            </nav>
-                            <div className="p-4 border-t border-gray-100">
-                                <button onClick={handleLogout} className="flex items-center gap-2 text-red-600">
-                                    <LogOut className="w-4 h-4" /> Sair
-                                </button>
-                            </div>
+                <div className={clsx(
+                    "fixed inset-0 z-40 md:hidden transition-opacity duration-300",
+                    isMobileMenuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+                )}>
+                    {/* Backdrop */}
+                    <div
+                        className="absolute inset-0 bg-gray-900/50 backdrop-blur-sm"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                    />
+
+                    {/* Drawer */}
+                    <div className={clsx(
+                        "absolute right-0 top-0 bottom-0 w-72 bg-white shadow-2xl flex flex-col transform transition-transform duration-300 ease-in-out",
+                        isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
+                    )}>
+                        <div className="relative flex-1 flex flex-col h-full">
+                            <button
+                                onClick={() => setIsMobileMenuOpen(false)}
+                                className="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-lg transition-colors z-50"
+                            >
+                                <X className="w-6 h-6 text-gray-500" />
+                            </button>
+                            <SidebarContent />
                         </div>
                     </div>
-                )}
+                </div>
 
-                <div className="p-6 md:p-8 max-w-7xl mx-auto w-full animate-in fade-in duration-500">
+                <div className="p-4 md:p-8 max-w-7xl mx-auto w-full animate-in fade-in duration-500">
                     <Outlet />
                 </div>
             </main>

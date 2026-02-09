@@ -4,19 +4,19 @@ services:
     name: academic-system-backend
     env: node
     rootDir: server
-    buildCommand: npm install && npx prisma generate && npm run build
-    startCommand: npm start
+    buildCommand: "npm install && npm run build"
+    startCommand: "npm start"
     envVars:
       - key: DATABASE_URL
         sync: false
       - key: JWT_SECRET
         sync: false
       - key: PORT
-        value: 10000
+        value: "10000"
 
   # Frontend Service (React/Vite) served as Web Service
   - type: web
     name: academic-system-frontend
     env: node
-    buildCommand: npm install && npm run build
-    startCommand: npx serve -s dist
+    buildCommand: "npm install && npm run build"
+    startCommand: "npx serve -s dist -l $PORT"
