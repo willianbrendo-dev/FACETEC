@@ -50,7 +50,7 @@ export const AdminCourses = () => {
                     <h1 className="text-2xl font-bold text-gray-900">Cursos & Disciplinas</h1>
                     <p className="text-gray-500">Gerencie programas acadêmicos e seus currículos.</p>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
                     <Button onClick={() => setIsCourseModalOpen(true)}>
                         <Plus className="w-4 h-4" /> Novo Curso
                     </Button>

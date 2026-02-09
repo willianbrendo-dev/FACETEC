@@ -116,7 +116,7 @@ export const Layout = () => {
             </aside>
 
             {/* Main Content */}
-            <main className="flex-1 md:ml-64 min-h-screen flex flex-col transition-all duration-300">
+            <main className="flex-1 md:ml-64 min-h-screen flex flex-col transition-all duration-300 overflow-x-hidden">
                 {/* Mobile Header */}
                 <header className="md:hidden bg-white border-b border-gray-200 p-4 flex items-center justify-between sticky top-0 z-20 shadow-sm">
                     <div className="flex items-center gap-2">

@@ -41,7 +41,7 @@ export const AdminUsers = () => {
                 </Button>
             </div>
 
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
                 {(['all', 'student', 'professor', 'admin'] as const).map(role => (
                     <button
                         key={role}
