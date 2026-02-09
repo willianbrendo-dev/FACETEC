@@ -166,7 +166,7 @@ export const useAcademicStore = create<AcademicState>((set, get) => ({
         }
     },
 
-    markAttendance: async (classId, sessionId, updates) => {
+    markAttendance: async (_classId, sessionId, updates) => {
         const headers = getAuthHeaders();
         await Promise.all(updates.map(u =>
             fetch(`${API_URL}/attendance`, {
