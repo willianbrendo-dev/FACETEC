@@ -68,9 +68,12 @@ export const Table = ({ headers, children }: { headers: string[]; children: Reac
 );
 
 // MODAL
+import { createPortal } from 'react-dom';
+
 export const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean; onClose: () => void; title: string; children: React.ReactNode }) => {
     if (!isOpen) return null;
-    return (
+
+    return createPortal(
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/50 backdrop-blur-sm animate-in fade-in duration-200">
             <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
                 <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
@@ -81,6 +84,7 @@ export const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean; o
                     {children}
                 </div>
             </div>
-        </div>
+        </div>,
+        document.body
     );
 };
