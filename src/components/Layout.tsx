@@ -9,8 +9,7 @@ import {
     Calendar,
     LogOut,
     Menu,
-    X,
-    School
+    X
 } from 'lucide-react';
 import clsx from 'clsx';
 import logo from '../assets/logo.png';
