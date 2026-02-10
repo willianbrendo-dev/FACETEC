@@ -46,15 +46,20 @@ O Render usa o arquivo `render.yaml` para configurar tudo.
 5.  Clique em **Create Web Service**.
 
 ### Passo 3.2: Frontend (Site)
-1.  No Render, clique em **New +** -> **Web Service**.
+1.  No Render, clique em **New +** -> **Static Site**.
 2.  Conecte o repositório.
 3.  Configure:
     *   **Name**: `academic-frontend`
     *   **Root Directory**: deixe em branco (ou `.`)
-    *   **Environment**: `Node`
     *   **Build Command**: `npm install && npm run build`
-    *   **Start Command**: `npx serve -s dist -l $PORT`
-4.  Clique em **Create Web Service**.
+    *   **Publish Directory**: `dist`
+4.  Clique em **Create Static Site**.
+5.  **Importante**: Após criar, vá em **Redirects/Rewrites**:
+    *   Adicione uma regra:
+        *   **Source**: `/*`
+        *   **Destination**: `/index.html`
+        *   **Action**: `Rewrite`
+    *   Isso é necessário para o React funcionar corretamente (SPA).
 
 ---
 
@@ -65,4 +70,4 @@ Assim que o **Backend** estiver "Live" (Verde):
 2.  Vá no serviço do **Frontend** -> **Environment**.
 3.  Adicione a variável:
     *   `VITE_API_URL`: A URL do backend (sem a barra final).
-4.  Salve. O Frontend vai reiniciar e conectar.
+4.  Salve. O Render fará um novo deploy do Frontend automaticamente.

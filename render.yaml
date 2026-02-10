@@ -14,9 +14,13 @@ services:
       - key: PORT
         value: "10000"
 
-  # Frontend Service (React/Vite) served as Web Service
-  - type: web
+  # Frontend Service (React/Vite) served as Static Site
+  - type: static
     name: academic-system-frontend
-    env: node
+    env: static
     buildCommand: "npm install && npm run build"
-    startCommand: "npx serve -s dist -l $PORT"
+    publishDir: "dist"
+    routes:
+      - type: rewrite
+        source: "/*"
+        destination: "/index.html"

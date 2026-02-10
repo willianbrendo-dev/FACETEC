@@ -13,6 +13,7 @@ import {
     School
 } from 'lucide-react';
 import clsx from 'clsx';
+import logo from '../assets/logo.png';
 
 export const Layout = () => {
     const { user, logout } = useAuthStore();
@@ -65,13 +66,8 @@ export const Layout = () => {
 
     const SidebarContent = () => (
         <>
-            <div className="p-6 flex items-center gap-3 border-b border-gray-100">
-                <div className="bg-primary-600 p-2 rounded-lg">
-                    <School className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                    <h1 className="font-bold text-gray-900 text-lg leading-tight">Sistema<br />Acadêmico</h1>
-                </div>
+            <div className="p-6 flex items-center justify-center border-b border-gray-100">
+                <img src={logo} alt="Sistema Acadêmico" className="max-h-12 w-auto object-contain" />
             </div>
 
             <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
@@ -120,10 +116,7 @@ export const Layout = () => {
                 {/* Mobile Header */}
                 <header className="md:hidden bg-white border-b border-gray-200 p-4 flex items-center justify-between sticky top-0 z-20 shadow-sm">
                     <div className="flex items-center gap-2">
-                        <div className="bg-primary-600 p-1.5 rounded-lg">
-                            <School className="w-5 h-5 text-white" />
-                        </div>
-                        <span className="font-bold text-gray-900">Sistema Acadêmico</span>
+                        <img src={logo} alt="Sistema Acadêmico" className="h-10 w-auto object-contain" />
                     </div>
                     <button
                         onClick={() => setIsMobileMenuOpen(true)}
