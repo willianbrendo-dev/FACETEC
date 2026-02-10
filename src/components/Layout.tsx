@@ -12,7 +12,7 @@ import {
     X
 } from 'lucide-react';
 import clsx from 'clsx';
-import logo from '../assets/logo.png';
+import logo from '../assets/logo.jpeg';
 
 export const Layout = () => {
     const { user, logout } = useAuthStore();
